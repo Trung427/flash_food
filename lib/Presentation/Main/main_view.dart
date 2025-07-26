@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../Auth/provider/auth_provider.dart';
 import '../Admin/admin_view.dart';
+import '../Admin/order_confirm_page.dart';
+import '../Base/services/order_service.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -27,6 +29,8 @@ class _MainViewState extends State<MainView> {
     MathUtils.init(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final isAdmin = authProvider.role == 'admin' || authProvider.role == 'staff';
+    final isStaff = authProvider.role == 'staff';
+    
     final _pages = [
       const HomeView(),
       const CartView(),
@@ -34,6 +38,7 @@ class _MainViewState extends State<MainView> {
       const ProfilView(),
       if (isAdmin) const AdminView(),
     ];
+    
     return Scaffold(
       body: _pages.elementAt(_currentIndex),
       bottomNavigationBar: Container(
@@ -56,9 +61,25 @@ class _MainViewState extends State<MainView> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          onTap: (value) => setState(() {
-            _currentIndex = value;
-          }),
+          onTap: (value) {
+            // Nếu là staff và ấn vào tab quản lý (index 4), chuyển thẳng vào OrderConfirmPage
+            if (isStaff && value == 4) {
+              final token = authProvider.token!;
+              final baseUrl = 'http://10.0.2.2:3000';
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrderConfirmPage(
+                    orderService: OrderService(baseUrl: baseUrl, token: token),
+                  ),
+                ),
+              );
+            } else {
+              setState(() {
+                _currentIndex = value;
+              });
+            }
+          },
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: false,
           iconSize: getSize(24),

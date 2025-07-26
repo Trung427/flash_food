@@ -16,7 +16,7 @@ dependencies:
   flutter_svg: ^2.0.9
   pinput: ^3.0.1
   provider: ^6.0.5
-  http: ^0.13.5
+  http: ^1.4.0
   shared_preferences: ^2.2.2
   file_picker: any
   flutter_localizations:
@@ -26,6 +26,7 @@ dependencies:
   google_sign_in: ^6.1.6
   firebase_auth: ^5.7.0
   qr_flutter: ^4.1.0
+  flutter_local_notifications: ^19.4.0
 
 
 dev_dependencies:

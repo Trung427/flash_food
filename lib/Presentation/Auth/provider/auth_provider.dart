@@ -37,15 +37,21 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         // Gửi FCM token lên backend
         String? fcmToken = await FirebaseMessaging.instance.getToken();
+        print('FCM Token for backend: $fcmToken');
         if (fcmToken != null && _token != null) {
-          await http.post(
-            Uri.parse('http://10.0.2.2:3000/api/user/save-fcm-token'),
-            headers: {
-              'Authorization': 'Bearer $_token',
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode({'fcm_token': fcmToken}),
-          );
+          try {
+            final response = await http.post(
+              Uri.parse('http://10.0.2.2:3000/api/user/save-fcm-token'),
+              headers: {
+                'Authorization': 'Bearer $_token',
+                'Content-Type': 'application/json',
+              },
+              body: jsonEncode({'fcm_token': fcmToken}),
+            );
+            print('FCM token saved to backend: ${response.statusCode}');
+          } catch (e) {
+            print('Error saving FCM token: $e');
+          }
         }
         return true;
       }

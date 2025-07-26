@@ -11,12 +11,79 @@ import 'Presentation/Base/provider/cart_provider.dart';
 import 'Presentation/Base/services/cart_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Background message received: ${message.notification?.title}');
+  _showNotification(message);
+}
+
+void _showNotification(RemoteMessage message) async {
+  print('Showing notification: ${message.notification?.title} - ${message.notification?.body}');
+  try {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'order_channel',
+      'Order Notifications',
+      channelDescription: 'Thông báo trạng thái đơn hàng',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+      showWhen: true,
+      enableVibration: true,
+      playSound: true,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      message.notification?.title ?? 'Thông báo',
+      message.notification?.body ?? '',
+      platformChannelSpecifics,
+    );
+    print('Notification displayed successfully');
+  } catch (e) {
+    print('Error showing notification: $e');
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  // Khởi tạo local notification
+  const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  // Tạo notification channel
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'order_channel',
+    'Order Notifications',
+    description: 'Thông báo trạng thái đơn hàng',
+    importance: Importance.max,
+  );
+  await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+  print('Notification channel created');
+
+  // Đăng ký background handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   String? fcmToken = await FirebaseMessaging.instance.getToken();
   print('FCM Token: ' + (fcmToken ?? 'null'));
+
+  // Lắng nghe notification khi app đang foreground
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Foreground message received: ${message.notification?.title}');
+    _showNotification(message);
+  });
+
+  // Lắng nghe khi user tap vào notification
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    print('Notification opened: ${message.notification?.title}');
+  });
+
   runApp(
     MultiProvider(
       providers: [

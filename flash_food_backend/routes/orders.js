@@ -45,6 +45,17 @@ router.post('/create', authenticateToken, async (req, res) => {
         [orderId, item.food_id, item.quantity, foods[0].price]
       );
     }
+    // Gửi FCM notification cho user nếu có fcm_token
+    const [[userInfo]] = await db.query('SELECT fcm_token FROM users WHERE id = ?', [userId]);
+    if (userInfo && userInfo.fcm_token) {
+      await admin.messaging().send({
+        token: userInfo.fcm_token,
+        notification: {
+          title: 'Đặt hàng thành công',
+          body: 'Đơn hàng của bạn đã được đặt thành công!'
+        }
+      });
+    }
     res.json({ success: true, order_id: orderId });
   } catch (err) {
     console.log('Order error:', err); // Thêm log debug
@@ -105,6 +116,20 @@ router.post('/:id/confirm', authenticateToken, async (req, res) => {
   try {
     // Cập nhật trạng thái và giờ xác nhận
     await db.query('UPDATE orders SET status = ?, confirmed_at = NOW() WHERE id = ?', ['confirmed', orderId]);
+    // Lấy user_id và fcm_token của đơn hàng
+    const [[orderInfo]] = await db.query('SELECT user_id FROM orders WHERE id = ?', [orderId]);
+    if (orderInfo) {
+      const [[userInfo]] = await db.query('SELECT fcm_token FROM users WHERE id = ?', [orderInfo.user_id]);
+      if (userInfo && userInfo.fcm_token) {
+        await admin.messaging().send({
+          token: userInfo.fcm_token,
+          notification: {
+            title: 'Đơn hàng đã được xác nhận',
+            body: 'Đơn hàng của bạn đã được xác nhận và đang được xử lý.'
+          }
+        });
+      }
+    }
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

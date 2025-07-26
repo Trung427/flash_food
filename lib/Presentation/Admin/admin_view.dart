@@ -186,92 +186,123 @@ class _AdminViewState extends State<AdminView> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildMenuItem(
-                      Icons.fastfood,
-                      'Quản lý món ăn',
-                      Colors.orange,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const FoodManagerPage()),
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildMenuItem(
-                      Icons.receipt_long,
-                      'Quản lý đơn hàng',
-                      Colors.green,
-                      onTap: () {
-                        final token = authProvider.token!;
-                        final baseUrl = 'http://10.0.2.2:3000';
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OrderConfirmPage(
-                              orderService: OrderService(baseUrl: baseUrl, token: token),
-                            ),
+        child: Builder(
+          builder: (context) {
+            if (authProvider.role == 'staff') {
+              // Chỉ hiển thị đúng 1 ô Quản lý đơn hàng chiếm gần hết màn hình
+              return Center(
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  padding: const EdgeInsets.all(0),
+                  child: _buildMenuItem(
+                    Icons.receipt_long,
+                    'Quản lý đơn hàng',
+                    Colors.green,
+                    onTap: () {
+                      final token = authProvider.token!;
+                      final baseUrl = 'http://10.0.2.2:3000';
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderConfirmPage(
+                            orderService: OrderService(baseUrl: baseUrl, token: token),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildMenuItem(
-                      Icons.people,
-                      'Quản lý tài khoản',
-                      isAdmin ? Colors.blue : Colors.grey,
-                      enabled: isAdmin,
-                      onTap: isAdmin
-                          ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => ManageAccountsPage(),
+                ),
+              );
+            }
+            return Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildMenuItem(
+                          Icons.fastfood,
+                          'Quản lý món ăn',
+                          Colors.orange,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const FoodManagerPage()),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: _buildMenuItem(
+                          Icons.receipt_long,
+                          'Quản lý đơn hàng',
+                          Colors.green,
+                          onTap: () {
+                            final token = authProvider.token!;
+                            final baseUrl = 'http://10.0.2.2:3000';
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => OrderConfirmPage(
+                                  orderService: OrderService(baseUrl: baseUrl, token: token),
                                 ),
-                              );
-                            }
-                          : null,
-                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: isAdmin
-                        ? _buildMenuItem(
-                            Icons.bar_chart,
-                            'Quản lý doanh thu',
-                            Colors.purple,
-                            enabled: true,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ManageRevenuePage(),
-                                ),
-                              );
-                            },
-                          )
-                        : const SizedBox(),
+                ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildMenuItem(
+                          Icons.people,
+                          'Quản lý tài khoản',
+                          isAdmin ? Colors.blue : Colors.grey,
+                          enabled: isAdmin,
+                          onTap: isAdmin
+                              ? () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ManageAccountsPage(),
+                                    ),
+                                  );
+                                }
+                              : null,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: isAdmin
+                            ? _buildMenuItem(
+                                Icons.bar_chart,
+                                'Quản lý doanh thu',
+                                Colors.purple,
+                                enabled: true,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const ManageRevenuePage(),
+                                    ),
+                                  );
+                                },
+                              )
+                            : const SizedBox(),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
