@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "515684465786",
+    "project_id": "flash-food-4917c",
+    "storage_bucket": "flash-food-4917c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:515684465786:android:96bbf192ce6a1276cc0fc3",
+        "android_client_info": {
+          "package_name": "com.example.flash_food"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "515684465786-rrb2peqd1a5afis8vso3mqm06hsft15o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flash_food",
+            "certificate_hash": "cfef4fd850583986503ceaeee7ca38c77696d45d"
+          }
+        },
+        {
+          "client_id": "515684465786-89i3lijv6fduo1kql5034o3r1ciqfvao.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpilZNhdSa5-3Ng0Zvx4djwJKRefFYf08"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "515684465786-89i3lijv6fduo1kql5034o3r1ciqfvao.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

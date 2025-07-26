@@ -1,0 +1,36 @@
+gradle-wrapper.jar
+/.gradle
+/captures/
+/gradlew
+/gradlew.bat
+/local.properties
+GeneratedPluginRegistrant.java
+.cxx/
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+key.properties
+**/*.keystore
+**/*.jks
+
+# Node
+node_modules/
+flash_food_backend/node_modules/
+package-lock.json
+
+# Dart/Flutter
+build/
+.dart_tool/
+.pub-cache/
+pubspec.lock
+
+# Android
+android/.gradle/
+android/app/build/
+*.iml
+
+# Env & secrets
+.env
+*.env
+firebase-service-account.json
+flash_food_backend/firebase-service-account.json
